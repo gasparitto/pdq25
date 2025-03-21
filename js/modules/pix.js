@@ -101,16 +101,11 @@ export default class Pix {
 
     /** @type {HTMLInputElement | Null} */
     const nome_input = this.formulario.querySelector("#pix-nome");
-    /** @type {HTMLInputElement | Null} */
-    const cidade_input = this.formulario.querySelector("#pix-cidade");
 
-    if (!nome_input || !cidade_input) throw new Error("Inputs de nome e cidade não encontrados");
+    if (!nome_input) throw new Error("Input de nome não encontrado");
 
     valido = this.validarInput(nome_input, N.normalizar, V.validar_nome) && valido;
     this.adicionar_validador(nome_input, N.normalizar, V.validar_nome);
-
-    valido = this.validarInput(cidade_input, N.normalizar, V.validar_cidade) && valido;
-    this.adicionar_validador(cidade_input, N.normalizar, V.validar_cidade);
 
     const pagadores = this.get_pagadores();
     if (!pagadores.length) throw new Error("Nenhum pagador encontrado");
@@ -131,7 +126,6 @@ export default class Pix {
       pagador.pix = M.criar_codigo_pix({
         chave: this.chave.get_chave(),
         nome: nome_input.value,
-        cidade: cidade_input.value,
         valor: parseFloat(pagador.valor).toFixed(2),
         referencia: pagador.referencia,
       });

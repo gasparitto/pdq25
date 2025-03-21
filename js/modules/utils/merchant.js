@@ -12,12 +12,11 @@ export default class Merchant {
    * @param {Object} params - Parâmetros para a criação do EMVQR
    * @param {string} params.chave - Chave PIX do recebedor
    * @param {string} params.nome - Nome do recebedor
-   * @param {string} params.cidade - Cidade
    * @param {string} params.valor - Valor da transação
    * @param {string} params.referencia - Referência da transação
    * @returns {string} Código EMVQR gerado
    */
-  static criar_codigo_pix({ chave, nome, cidade, valor, referencia }) {
+  static criar_codigo_pix({ chave, nome, valor, referencia }) {
     const emvqr = MC.buildEMVQR();
 
     emvqr.setPayloadFormatIndicator("01");
@@ -35,9 +34,7 @@ export default class Merchant {
       emvqr.setMerchantName(nome);
     }
 
-    if (cidade) {
-      emvqr.setMerchantCity(cidade);
-    }
+    emvqr.setMerchantCity("SAOPAULO");
 
     if (valor && valor != "") {
       emvqr.setTransactionAmount(valor);

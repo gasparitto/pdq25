@@ -165,15 +165,6 @@ export default class Validador {
   };
 
   /**
-   * Valida se uma cidade é válida
-   * @param {String} cidade cidade a ser validada
-   * @returns {Boolean} true se o cidade é válida, false se não é válid
-   */
-  static validar_cidade = (cidade) => {
-    return cidade.length > 0 && cidade.length <= 15;
-  };
-
-  /**
    * Valida se um valor é válido
    * @param {String} valor Valor a ser validado
    * @returns {Boolean} true se o valor é válido, false se não é válido
