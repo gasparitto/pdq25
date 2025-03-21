@@ -68,6 +68,7 @@ export default class CSV {
   static parse_csv_to_pagadores = (csv) => {
     const lines = csv
       .toString()
+      .replace(/"/g, "")
       .split("\n")
       .map((line) => line.trim())
       .filter((line) => line);
