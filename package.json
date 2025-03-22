@@ -1,21 +1,22 @@
 {
-  "name": "gerador-pix",
+  "name": "gerador-qrcode-poker-de-quinta",
+  "description": "Gerador de QRCodes para pagamentos com PIX",
+  "author": "Daniel de Oliveira (Harmew) <dann.ew@outlook.com>",
   "version": "1.0.0",
-  "scripts": {
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch",
-    "prepare": "husky"
-  },
   "keywords": [
     "pix",
     "qrcode",
     "generator",
     "css",
-    "html"
+    "html",
+    "csv"
   ],
-  "author": "Daniel de Oliveira",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "prepare": "husky"
+  },
   "license": "MIT",
-  "description": "Gerador de QRCodes para pagamentos com PIX",
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/plugin-transform-runtime": "^7.26.10",
