@@ -2,10 +2,7 @@
 
 import { Merchant as MC } from "steplix-emv-qrcps";
 
-/**
- * @class Merchant
- * @classdesc Classe para gerar códigos EMVQR (PIX)
- */
+/** @classdesc Classe para gerar códigos EMVQR (PIX) */
 export default class Merchant {
   /**
    * Cria um objeto EMVQR

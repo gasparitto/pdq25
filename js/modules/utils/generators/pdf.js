@@ -1,19 +1,13 @@
 // @ts-check
+
+/**
+ * @typedef {import('../../interfaces/types.js').Pagador} Pagador
+ */
+
 import QR from "./qrcode";
 
 // Constants
 import SVGs from "../../constants/svg.json";
-
-/**
- * Pagador Object
- * @typedef {Object} Pagador
- * @property {HTMLInputElement} referencia_input - Input do pagador
- * @property {HTMLInputElement} valor_input - Input do pagador
- * @property {String} id - ID do pagador
- * @property {String} referencia - Referencia do pagador
- * @property {String} valor - Valor a ser pago
- * @property {String | Undefined } pix - Código Pix
- */
 
 /**
  * @class Pdf
@@ -84,7 +78,7 @@ export default class Pdf {
               </div>
             </div>
           `;
-      })
+      }),
     );
 
     return `

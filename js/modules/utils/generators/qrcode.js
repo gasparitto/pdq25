@@ -2,10 +2,7 @@
 
 import QR from "qrcode";
 
-/**
- * @class QRCode
- * @classdesc Classe para gerar QRCode
- */
+/** @classdesc Classe para gerar QRCode */
 export default class QRCode {
   /**
    * Gera um QRCode a partir de um texto

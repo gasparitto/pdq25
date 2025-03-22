@@ -1,21 +1,8 @@
 // @ts-check
 
 /**
- * Pagador Object
- * @typedef {Object} Pagador
- * @property {HTMLInputElement} referencia_input - Input do pagador
- * @property {HTMLInputElement} valor_input - Input do pagador
- * @property {String} id - ID do pagador
- * @property {String} referencia - Referencia do pagador
- * @property {String} valor - Valor a ser pago
- * @property {String | Undefined } pix - Código Pix
- */
-
-/**
- * Pagador CSV
- * @typedef {Object} PagadorCSV
- * @property {String} referencia - Referencia do pagador
- * @property {String} valor - Valor a ser pago
+ * @typedef {import('../../interfaces/types.js').Pagador} Pagador
+ * @typedef {import('../../interfaces/types.js').PagadorCSV} PagadorCSV
  */
 
 /**

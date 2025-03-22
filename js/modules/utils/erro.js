@@ -1,9 +1,6 @@
 // @ts-check
 
-/**
- * @class Erro
- * @classdesc Classe para manipular mensagens de erro
- */
+/** @classdesc Classe para manipular mensagens de erro */
 export default class Erro {
   /**
    * Mostra uma mensagem de erro em um input

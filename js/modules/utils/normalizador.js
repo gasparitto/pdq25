@@ -1,9 +1,6 @@
 // @ts-check
 
-/**
- * @class Normalizador
- * @classdesc Classe para normalizar textos
- */
+/** @classdesc Classe para normalizar textos */
 export default class Normalizador {
   /**
    * Normaliza um texto removendo tags HTML
@@ -11,9 +8,7 @@ export default class Normalizador {
    * @returns {String} Texto normalizado
    */
   static normalizar = (text) => {
-    if (!text) {
-      return "";
-    }
+    if (!text) return "";
 
     return text
       .toString()
@@ -30,6 +25,7 @@ export default class Normalizador {
   static normalizar_referencia = (referencia) => {
     return this.normalizar(referencia).replace(/\s+/g, "").toUpperCase();
   };
+
   /**
    * Normaliza um valor
    * @param {String} valor Valor a ser normalizado

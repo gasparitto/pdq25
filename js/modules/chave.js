@@ -8,44 +8,33 @@ import chave from "./constants/chave.json";
 // Utils
 import Erro from "./utils/erro";
 
+/** @classdesc Classe para manipular a chave PIX*/
 export default class Chave {
+  /** @type {HTMLSelectElement | Null} */ tipo_input;
+  /** @type {HTMLInputElement | Null} */ chave_input;
+  /** @type {String} */ tipo = "CPF";
+  /** @type {Boolean} */ validando = false;
+
   /**
    * @param {String} tipo_input
    * @param {String} chave_input
    */
   constructor(tipo_input, chave_input) {
-    /** @type {HTMLSelectElement | Null} */
     this.tipo_input = document.querySelector(tipo_input);
-    /** @type {HTMLInputElement | Null} */
     this.chave_input = document.querySelector(chave_input);
-    /** @type {String} */
-    this.tipo = "CPF";
-    /** @type {Boolean} */
-    this.validando = false;
   }
 
-  /**
-   * Atualiza o formulário de acordo com o tipo de chave selecionado
-   * @returns {Void}
-   */
+  /** Atualiza o formulário de acordo com o tipo de chave selecionado  */
   atualizar_input() {
     if (!this.tipo_input || !this.chave_input) return;
 
     this.tipo = this.tipo_input.value;
 
     const config = chave[this.tipo];
-
-    if (!config) {
-      console.error("Tipo de chave inválido");
-      return;
-    }
+    if (!config) throw new Error("Tipo de chave inválido");
 
     const grupo = this.chave_input.parentElement;
-
-    if (!grupo) {
-      console.error("Input não está dentro de um container");
-      return;
-    }
+    if (!grupo) throw new Error("Input não está dentro de um container");
 
     let helpElement = grupo.querySelector(".input-group-text");
 
@@ -93,11 +82,8 @@ export default class Chave {
         break;
     }
 
-    if (valido) {
-      Erro.limpar_erro(this.chave_input);
-    } else {
-      Erro.mostrar_erro(this.chave_input);
-    }
+    if (valido) Erro.limpar_erro(this.chave_input);
+    else Erro.mostrar_erro(this.chave_input);
 
     return valido;
   }
@@ -128,24 +114,17 @@ export default class Chave {
    */
   get_chave_raw() {
     if (!this.chave_input) return "";
-
     return this.chave_input.value.trim();
   }
 
-  /**
-   * Aplica a máscara na chave PIX
-   * @returns {Void}
-   */
+  /** Aplica a máscara na chave PIX */
   mascara() {
     if (!this.chave_input) return;
 
     const valor = this.chave_input.value;
     const config = chave[this.tipo];
 
-    if (!config) {
-      console.error("Tipo de chave inválido");
-      return;
-    }
+    if (!config) throw new Error("Tipo de chave inválido");
 
     if (!config.mask) {
       this.chave_input.value = valor;
@@ -164,10 +143,7 @@ export default class Chave {
     this.chave_input.value = mask.replace(/0/g, () => numeros[i++] || "");
   }
 
-  /**
-   * Adiciona o evento de validação na chave PIX
-   * @returns {Void}
-   */
+  /** Adiciona o evento de validação na chave PIX */
   adicionar_validador() {
     if (!this.chave_input || this.validando) return;
 
@@ -180,10 +156,7 @@ export default class Chave {
   }
 
   init() {
-    if (!this.tipo_input || !this.chave_input) {
-      console.error("Chave não inicializado: argumentos inválidos");
-      return;
-    }
+    if (!this.tipo_input || !this.chave_input) throw new Error("Chave não inicializado: argumentos inválidos");
 
     this.tipo_input.addEventListener("change", () => this.atualizar_input());
     this.chave_input.addEventListener("input", () => this.mascara());

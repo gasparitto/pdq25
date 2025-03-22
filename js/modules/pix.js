@@ -1,5 +1,10 @@
 // @ts-check
 
+/**
+ * @typedef {import('./interfaces/types.js').Pagador} Pagador
+ * @typedef {import('./interfaces/types.js').PagadorCSV} PagadorCSV
+ */
+
 import Chave from "./chave";
 
 // Utils
@@ -14,39 +19,26 @@ import PDF from "./utils/generators/pdf";
 // Constants
 import SVGs from "./constants/svg.json";
 
-/**
- * Pagador Object
- * @typedef {Object} Pagador
- * @property {HTMLInputElement} referencia_input - Input do pagador
- * @property {HTMLInputElement} valor_input - Input do pagador
- * @property {String} id - ID do pagador
- * @property {String} referencia - Referencia do pagador
- * @property {String} valor - Valor a ser pago
- * @property {String | Undefined } pix - Código Pix
- */
-
-/**
- * Pagador CSV
- * @typedef {Object} PagadorCSV
- * @property {String} referencia - Referencia do pagador
- * @property {String} valor - Valor a ser pago
- */
-
-/**
- * @class Pix
- * @classdesc Classe para gerar códigos Pix
- */
+/** @classdesc Classe para gerar códigos Pix */
 export default class Pix {
+  /** @type {HTMLFormElement | null} */ formulario;
+  /** @type {HTMLButtonElement | null} */ adicionar_pagador_btn;
+  /** @type {HTMLButtonElement | null} */ importar_pagador_csv_btn;
+  /** @type {HTMLDivElement | null} */ pagadores_div;
+  /** @type {HTMLDivElement | null} */ recebedor_div;
+  /** @type {HTMLDivElement | null} */ resultado_div;
+  /** @type {number} */ qtd_pagadores = 1;
+
   /**
-   * Inicializa o formulário do Pix
-   * @param {String} formulario - Formulário do Pix
-   * @param {String} tipo_chave_input - Input do tipo de chave
-   * @param {String} chave_input - Input da chave
-   * @param {String} adicionar_pagador_btn - Botão para adicionar pagador
-   * @param {String} importar_pagador_csv_btn - Botão para importar pagadores via CSV
-   * @param {String} pagadores_div - Div que contém os pagadores
-   * @param {String} recebedor_div - Seção que contém o resultado
-   * @param {String} resultado_div - Div que contém o resultado
+   * Inicializa o formulário Pix
+   * @param {string} formulario - Seletor do formulário
+   * @param {string} tipo_chave_input - Seletor do input de tipo de chave
+   * @param {string} chave_input - Seletor do input de chave
+   * @param {string} adicionar_pagador_btn - Seletor do botão de adicionar pagador
+   * @param {string} importar_pagador_csv_btn - Seletor do botão de importação CSV
+   * @param {string} pagadores_div - Seletor da div de pagadores
+   * @param {string} recebedor_div - Seletor da div de recebedor
+   * @param {string} resultado_div - Seletor da div de resultado
    */
   constructor(
     formulario,
@@ -56,52 +48,33 @@ export default class Pix {
     importar_pagador_csv_btn,
     pagadores_div,
     recebedor_div,
-    resultado_div
+    resultado_div,
   ) {
-    /** @type {HTMLFormElement | Null} */
     this.formulario = document.querySelector(formulario);
-    /** @type {HTMLButtonElement | Null} */
     this.adicionar_pagador_btn = document.querySelector(adicionar_pagador_btn);
-    /** @type {HTMLButtonElement | Null} */
     this.importar_pagador_csv_btn = document.querySelector(importar_pagador_csv_btn);
-    /** @type {HTMLDivElement | Null} */
     this.pagadores_div = document.querySelector(pagadores_div);
-    /** @type {HTMLDivElement | Null} */
     this.recebedor_div = document.querySelector(recebedor_div);
-    /** @type {HTMLDivElement | Null} */
     this.resultado_div = document.querySelector(resultado_div);
-    /** @type {Number} */
-    this.qtd_pagadores = 1;
-    /** @type {Chave | Null} */
     this.chave = new Chave(tipo_chave_input, chave_input);
 
-    if (this.adicionar_pagador_btn) {
-      this.adicionar_pagador_btn.addEventListener("click", () => this.adicionar_pagador());
-    }
-
-    if (this.importar_pagador_csv_btn) {
-      this.importar_pagador_csv_btn.addEventListener("click", () => this.importar_pagadores_csv());
-    }
+    // Event Listeners
+    this.adicionar_pagador_btn?.addEventListener("click", () => this.adicionar_pagador());
+    this.importar_pagador_csv_btn?.addEventListener("click", () => this.importar_pagadores_csv());
   }
 
-  /**
-   * Gera um código Pix
-   * @returns {Void}
-   */
+  /** Gera um código Pix */
   gerar_pix() {
     if (!this.chave || !this.formulario) throw new Error("Chave ou formulário não encontrados");
     if (!this.recebedor_div || !this.resultado_div) throw new Error("Divs de resultado não encontradas");
 
-    /** @type {Boolean} */
     let valido = true;
 
     E.limpar_erros(this.formulario);
     this.chave.adicionar_validador();
     valido = this.chave.validar();
 
-    /** @type {HTMLInputElement | Null} */
-    const nome_input = this.formulario.querySelector("#pix-nome");
-
+    const /** @type {HTMLInputElement | Null} */ nome_input = this.formulario.querySelector("#pix-nome");
     if (!nome_input) throw new Error("Input de nome não encontrado");
 
     valido = this.validarInput(nome_input, N.normalizar, V.validar_nome) && valido;
@@ -136,10 +109,9 @@ export default class Pix {
 
   /**
    * Adiciona um validador a um input
-   * @param {HTMLInputElement} input
-   * @param {Function | Null} normalizador
-   * @param {Function} validador
-   * @returns {Void}
+   * @param {HTMLInputElement} input - Input a ser validado
+   * @param {Function} normalizador - Função de normalização
+   * @param {Function} validador - Função de validação
    */
   adicionar_validador(input, normalizador, validador) {
     if (!input || !normalizador || !validador) throw new Error("Input ou funções inválidas");
@@ -149,8 +121,7 @@ export default class Pix {
       elemento.removeEventListener("input", elemento.__validadorListener);
     }
 
-    /** @param {Event} e */
-    const listener = (e) => {
+    const listener = /** @param {Event} e */ (e) => {
       const target = /** @type {HTMLInputElement} */ (e.target);
 
       const txt = normalizador(target.value || "");
@@ -163,10 +134,7 @@ export default class Pix {
     elemento.addEventListener("input", listener);
   }
 
-  /**
-   * Adiciona um pagador ao formulário
-   * @returns {Void}
-   */
+  /** Adiciona um pagador ao formulário */
   adicionar_pagador() {
     if (!this.pagadores_div) return;
 
@@ -194,8 +162,7 @@ export default class Pix {
     div.appendChild(referencia_div);
     div.appendChild(valor_div);
 
-    /** @type {HTMLButtonElement | Null} */
-    const remover_pagador_btn = valor_div.querySelector("#remove-pagador");
+    const /** @type {HTMLButtonElement | Null} */ remover_pagador_btn = valor_div.querySelector("#remove-pagador");
 
     if (!remover_pagador_btn) {
       console.error("Botão de remover pagador não encontrado");
@@ -220,7 +187,6 @@ export default class Pix {
   /**
    * Adiciona um pagador do CSV ao formulário
    * @param {PagadorCSV} pagador - Objeto de pagador contendo 'referencia' e 'valor'
-   * @returns {Void}
    */
   adicionar_pagador_csv(pagador) {
     if (!this.pagadores_div) return;
@@ -249,21 +215,13 @@ export default class Pix {
     div.appendChild(referencia_div);
     div.appendChild(valor_div);
 
-    /** @type {HTMLButtonElement | Null} */
-    const remover_pagador_btn = valor_div.querySelector("#remove-pagador");
+    const /** @type {HTMLButtonElement | Null} */ remover_pagador_btn = valor_div.querySelector("#remove-pagador");
 
-    if (!remover_pagador_btn && this.qtd_pagadores > 1) {
-      console.error("Botão de remover pagador não encontrado");
-      return;
-    }
+    if (!remover_pagador_btn && this.qtd_pagadores > 1) throw new Error("Botão de remover pagador não encontrado");
 
     if (remover_pagador_btn && this.qtd_pagadores > 1) {
       remover_pagador_btn.addEventListener("click", () => {
-        if (!remover_pagador_btn?.dataset?.id) {
-          console.error("ID do pagador não encontrado");
-          return;
-        }
-
+        if (!remover_pagador_btn?.dataset?.id) throw new Error("ID do pagador não encontrado");
         this.remover_pagador(remover_pagador_btn?.dataset?.id);
       });
     }
@@ -275,10 +233,7 @@ export default class Pix {
     this.qtd_pagadores++;
   }
 
-  /**
-   * Importa pagadores via CSV
-   * @returns {Void}
-   */
+  /** Importa pagadores via CSV */
   importar_pagadores_csv() {
     const input_csv = document.createElement("input");
     input_csv.type = "file";
@@ -300,12 +255,9 @@ export default class Pix {
           const pagadores = CSV.parse_csv_to_pagadores(csv);
           if (!pagadores) throw new Error("Erro ao ler arquivo CSV");
 
-          pagadores.forEach((pagador) => {
-            this.adicionar_pagador_csv(pagador);
-          });
+          pagadores.forEach((pagador) => this.adicionar_pagador_csv(pagador));
         };
 
-        // Lê o arquivo CSV como texto
         reader.readAsText(file);
       } catch (error) {
         console.error(error);
@@ -321,12 +273,7 @@ export default class Pix {
    */
   remover_pagador(id) {
     const pagador = document.getElementById(id);
-
-    if (!pagador) {
-      console.error("Pagador não encontrado");
-      return;
-    }
-
+    if (!pagador) throw new Error("Pagador não encontrado");
     pagador.remove();
   }
 
@@ -338,10 +285,7 @@ export default class Pix {
    * @param {Pagador[]} pagadores
    */
   async renderizar_pixs(tipo, chave, nome, pagadores) {
-    if (!this.recebedor_div || !this.resultado_div) {
-      console.error("Div resultado não encontrado");
-      return;
-    }
+    if (!this.recebedor_div || !this.resultado_div) throw new Error("Divs de resultado não encontradas");
 
     this.resultado_div.innerHTML = "";
     this.recebedor_div.innerHTML = `
@@ -371,20 +315,14 @@ export default class Pix {
     btn_export_csv.classList.add("btn", "btn-dark", "btn-sm");
     btn_export_csv.type = "button";
     btn_export_csv.innerHTML = `${SVGs.CSV}`;
-
-    btn_export_csv.addEventListener("click", () => {
-      CSV.gerar_csv(pagadores, "pix");
-    });
+    btn_export_csv.addEventListener("click", () => CSV.gerar_csv(pagadores, "pix"));
 
     const btn_print_csv = document.createElement("button");
     btn_print_csv.id = "pix-print-btn";
     btn_print_csv.classList.add("btn", "btn-secondary", "btn-sm");
     btn_print_csv.type = "button";
     btn_print_csv.innerHTML = `${SVGs.PRINTER}`;
-
-    btn_print_csv.addEventListener("click", async () => {
-      await PDF.gerar_pdf(tipo, chave, nome, pagadores);
-    });
+    btn_print_csv.addEventListener("click", async () => await PDF.gerar_pdf(tipo, chave, nome, pagadores));
 
     this.resultado_div.appendChild(pagadores_div);
     pagadores_div.appendChild(pagadores_titulo);
@@ -400,9 +338,9 @@ export default class Pix {
 
       const qr_div = document.createElement("div");
       qr_div.classList.add("d-flex", "justify-content-between");
-      qr_div.innerHTML = `<img class="qrcode img-fluid rounded-start" src="${await QR.gerar_qrcode(
-        pagador.pix
-      )}" alt="${pagador.referencia}" />`;
+      qr_div.innerHTML = `<img class="qrcode img-fluid rounded-start" src="${await QR.gerar_qrcode(pagador.pix)}" alt="${
+        pagador.referencia
+      }" />`;
 
       const card_body = document.createElement("div");
       card_body.classList.add("card-body", "overflow-hidden");
@@ -441,14 +379,9 @@ export default class Pix {
       const copy_btn = document.getElementById(`btn-${pagador.id}`);
       if (copy_btn) {
         copy_btn.addEventListener("click", () => {
-          /** @type {HTMLInputElement | Null} */
-          const input = document.querySelector(`#in-${pagador.id}`);
+          const /** @type {HTMLInputElement | Null} */ input = document.querySelector(`#in-${pagador.id}`);
 
-          if (!input) {
-            console.error("Input não encontrado");
-            return;
-          }
-
+          if (!input) throw new Error("Input não encontrado");
           navigator.clipboard.writeText(input.value);
         });
       }
@@ -462,26 +395,17 @@ export default class Pix {
    * @returns {Pagador[]} Lista de pagadores do formulário
    */
   get_pagadores() {
-    /** @type {Pagador[]} */
-    const pagadores = [];
+    if (!this.formulario) throw new Error("Formulário não encontrado");
 
-    if (!this.formulario) {
-      console.error("Formulário não encontrado");
-      return pagadores;
-    }
+    const /** @type {Pagador[]} */ pagadores = [];
 
     this.formulario.querySelectorAll("div[id^='pagador-']").forEach((pagador) => {
       const id = pagador.id;
 
-      /** @type {HTMLInputElement | Null} */
-      const referencia_input = pagador.querySelector(`input[id^='pix-referencia-${id}']`);
-      /** @type {HTMLInputElement | Null} */
-      const valor_input = pagador.querySelector(`input[id^='pix-valor-${id}']`);
+      const /** @type {HTMLInputElement | Null} */ referencia_input = pagador.querySelector(`input[id^='pix-referencia-${id}']`);
+      const /** @type {HTMLInputElement | Null} */ valor_input = pagador.querySelector(`input[id^='pix-valor-${id}']`);
 
-      if (!referencia_input || !valor_input) {
-        console.error("Inputs de referencia e valor não encontrados");
-        return;
-      }
+      if (!referencia_input || !valor_input) throw new Error("Inputs de referência e valor não encontrados");
 
       const referencia = N.normalizar_referencia(referencia_input.value);
       const valor = N.normalizar_valor(Number(valor_input.value).toFixed(2));
@@ -526,15 +450,14 @@ export default class Pix {
       !this.resultado_div ||
       !this.chave
     ) {
-      console.error("Pix não inicializado: argumentos inválidos");
-      return;
+      throw new Error("Pix não inicializado: argumentos inválidos");
     }
 
     this.chave.init();
     this.adicionar_pagador();
 
-    this.formulario.addEventListener("submit", (event) => {
-      event.preventDefault();
+    this.formulario.addEventListener("submit", (e) => {
+      e.preventDefault();
       this.gerar_pix();
     });
   }
